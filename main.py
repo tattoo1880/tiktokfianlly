@@ -223,7 +223,7 @@ def main():
                         
                         
                     # 輸入第二組
-                    time.sleep(2)
+                        time.sleep(2)
                     
                     
                         

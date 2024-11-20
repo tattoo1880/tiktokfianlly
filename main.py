@@ -75,8 +75,8 @@ def switchperson():
     switch_button_bounds = switch_button['bounds']
     perform_click_by_bounds(switch_button_bounds, driver)
     
-    with open('switch.xml', 'w') as f:
-        f.write(driver.page_source)
+    # with open('switch.xml', 'w') as f:
+    #     f.write(driver.page_source)
         
         
     # 找到所有text不为空而且不为新增帳號的TextView
@@ -301,8 +301,8 @@ def doit(bound1):
                 video_xml = driver.page_source
                 soup = BeautifulSoup(video_xml, 'xml')
                 
-                with open('target_list.xml', 'w') as f:
-                    f.write(driver.page_source)
+                # with open('target_list.xml', 'w') as f:
+                #     f.write(driver.page_source)
                     
                 video_ele = soup.find('androidx.viewpager.widget.ViewPager')
                 

@@ -19,7 +19,155 @@ import re
 #全局變量TARGET_LIST
 TARGET_LIST = []
 
+def switchperson():
+    options = AppiumOptions()
+    options.load_capabilities({
+        "platformName": "Android",
+        "appium:platformVersion": "10",
+        "appium:deviceName": "fe85f60f",
+        "appium:automationName": "UiAutomator2",
+        "appium:noReset": "true",
+        "appium:ensureWebviewsHavePages": True,
+        "appium:nativeWebScreenshot": True,
+        "appium:newCommandTimeout": 3600,
+        "appium:connectHardwareKeyboard": True,
+        "appium:appPackage": "com.zhiliaoapp.musically",
+        "appium:appActivity": "com.ss.android.ugc.aweme.main.MainActivity",
+    })
+    
+    driver = webdriver.Remote("http://127.0.0.1:4723/wd/hub", options=options)
+    
+   
+        
+        
+    soup = BeautifulSoup(driver.page_source, 'xml')
+    
+    # android.widget.FrameLayout
+    frame = soup.find('android.widget.FrameLayout',{'content-desc':'個人資料'})
+    clickbounds = frame['bounds']
+    perform_click_by_bounds(clickbounds, driver)
+    
+    time.sleep(3)
+    
+        
+        
+    execute_adb_command(driver, "input tap 1011 175")
+    time.sleep(1)
+    execute_adb_command(driver, "input tap 300 1984")
+    time.sleep(3)
+
+        
+    swipe(driver, 580, 2000, 650, 1100, 350)
+    time.sleep(1)
+    swipe(driver, 580, 2000, 650, 1100, 350)
+    time.sleep(1)
+    swipe(driver, 580, 2000, 650, 1100, 350)
+    time.sleep(1)
+    swipe(driver, 580, 2000, 650, 1100, 350)
+    time.sleep(1)
+    
+  
+        
+        
+    soup = BeautifulSoup(driver.page_source, 'xml')
+    
+    switch_button = soup.find('android.widget.TextView', {'text': '切換帳號'})
+    switch_button_bounds = switch_button['bounds']
+    perform_click_by_bounds(switch_button_bounds, driver)
+    
+    with open('switch.xml', 'w') as f:
+        f.write(driver.page_source)
+        
+        
+    # 找到所有text不为空而且不为新增帳號的TextView
+    soup = BeautifulSoup(driver.page_source, 'xml')
+    # textview = soup.find_all('android.widget.TextView', {'text': True})
+    textview = soup.find_all('android.widget.TextView', {'text': True})
+    bounds_list = []
+    for text in textview:
+        if text['text'] != '新增帳號':
+            bounds = text['bounds']
+            bounds_list.append(bounds)
+    time.sleep(10)
+    
+    print("获取到账户bounds", bounds_list)
+    
+    driver.quit()
+    
+    return bounds_list
 def main():
+    list1 = switchperson()
+    for i in list1:
+        doit(i)
+
+def mainscreen(bounds):
+    options = AppiumOptions()
+    options.load_capabilities({
+        "platformName": "Android",
+        "appium:platformVersion": "10",
+        "appium:deviceName": "fe85f60f",
+        "appium:automationName": "UiAutomator2",
+        "appium:noReset": "true",
+        "appium:ensureWebviewsHavePages": True,
+        "appium:nativeWebScreenshot": True,
+        "appium:newCommandTimeout": 3600,
+        "appium:connectHardwareKeyboard": True,
+        "appium:appPackage": "com.zhiliaoapp.musically",
+        "appium:appActivity": "com.ss.android.ugc.aweme.main.MainActivity",
+    })
+    driver = webdriver.Remote("http://127.0.0.1:4723/wd/hub", options=options)
+    
+    soup = BeautifulSoup(driver.page_source, 'xml')
+    
+    # android.widget.FrameLayout
+    frame = soup.find('android.widget.FrameLayout',{'content-desc':'個人資料'})
+    clickbounds = frame['bounds']
+    perform_click_by_bounds(clickbounds, driver)
+    
+    time.sleep(3)
+    
+        
+        
+    execute_adb_command(driver, "input tap 1011 175")
+    time.sleep(1)
+    execute_adb_command(driver, "input tap 300 1984")
+    time.sleep(3)
+
+        
+    swipe(driver, 580, 2000, 650, 1100, 350)
+    time.sleep(1)
+    swipe(driver, 580, 2000, 650, 1100, 350)
+    time.sleep(1)
+    swipe(driver, 580, 2000, 650, 1100, 350)
+    time.sleep(1)
+    swipe(driver, 580, 2000, 650, 1100, 350)
+    time.sleep(1)
+    
+  
+        
+        
+    soup = BeautifulSoup(driver.page_source, 'xml')
+    
+    switch_button = soup.find('android.widget.TextView', {'text': '切換帳號'})
+    switch_button_bounds = switch_button['bounds']
+    perform_click_by_bounds(switch_button_bounds, driver)
+    
+    time.sleep(3)
+    
+    # 根據bounds點擊
+    perform_click_by_bounds(bounds, driver)
+    
+    time.sleep(10)
+    print("用户切换为", bounds)
+    
+    driver.quit()
+    
+    
+
+
+def doit(bound1):
+    
+    mainscreen(bound1)
     global TARGET_LIST
     
     options = AppiumOptions()
@@ -32,17 +180,22 @@ def main():
         "appium:ensureWebviewsHavePages": True,
         "appium:nativeWebScreenshot": True,
         "appium:newCommandTimeout": 3600,
-        "appium:connectHardwareKeyboard": True
+        "appium:connectHardwareKeyboard": True,
+        "appium:appPackage": "com.zhiliaoapp.musically",
+        "appium:appActivity": "com.ss.android.ugc.aweme.main.MainActivity",
     })
 
     driver = webdriver.Remote("http://127.0.0.1:4723/wd/hub", options=options)
+    
+    
+    
     text = "@7jhrmbufvvuij"
 
     time.sleep(2)
     print("start")
 
     perform_click(1020, 183, driver)
-
+    time.sleep(2)
     search_xml = driver.page_source
 
     # 使用bs4解析xml
@@ -98,8 +251,8 @@ def main():
                     time.sleep(2)
                     newnewxml = driver.page_source
                     soup = BeautifulSoup(newnewxml, 'xml')
-                    with open('newnewxml.xml', 'w') as f:
-                        f.write(soup.prettify())
+                    # with open('newnewxml.xml', 'w') as f:
+                    #     f.write(soup.prettify())
                         
                     fen_el = soup.find('android.widget.TextView', {'text': '粉絲'})
                     if fen_el is not None:
@@ -140,161 +293,92 @@ def main():
                     
                     # 將name_set加入全局變量TARGET_LIST
                     TARGET_LIST = list(name_set)
-                    
-                    
-                    
-                    
-                            
-                        
-                    
-                    
-                    
 
-        except Exception as e:
-            print("e", e)
-            
-        if len(TARGET_LIST) >= 10:
-            print("TARGET_LIST", len(TARGET_LIST))
-            perform_click(820,2150,driver)
-            
-            video_xml = driver.page_source
-            soup = BeautifulSoup(video_xml, 'xml')
-            
-            # with open('target_list.xml', 'w') as f:
-            #     f.write(driver.page_source)
+            if len(TARGET_LIST) >= 10:
+                print("TARGET_LIST", len(TARGET_LIST))
+                perform_click(820,2150,driver)
+                time.sleep(4)
+                video_xml = driver.page_source
+                soup = BeautifulSoup(video_xml, 'xml')
                 
-            video_ele = soup.find('androidx.viewpager.widget.ViewPager')
-            
-            if video_ele is not None:
-                # 找到video元素下的android.widget.TextView
-                video_text = video_ele.find('android.widget.TextView')
-                if video_text is not None:
-                    bounds = video_text['bounds']
-                    perform_click_by_bounds(bounds, driver)               
-                time.sleep(2)
-                
-                with open('video.xml', 'w') as f:
+                with open('target_list.xml', 'w') as f:
                     f.write(driver.page_source)
                     
-                soup = BeautifulSoup(driver.page_source, 'xml')
-                    #android.widget.EditText
-                comment_el = soup.find('android.widget.EditText')
-                if comment_el is not None:
-                    bounds = comment_el['bounds']
-                    perform_click_by_bounds(bounds, driver)
-                for i in range(5):    
-                    # soup = BeautifulSoup(driver.page_source, 'xml')
-                    # #android.widget.EditText
-                    # comment_el = soup.find('android.widget.EditText')
-                    # if comment_el is not None:
-                    #     bounds = comment_el['bounds']
-                    #     perform_click_by_bounds(bounds, driver)
-                        
-                        # with open('comment.xml', 'w') as f:
-                        #     f.write(driver.page_source)
-                            
-                        soup1 = BeautifulSoup(driver.page_source, 'xml')
-                            
-                        # android.widget.LinearLayout
-                        coment_el = soup1.find('android.widget.LinearLayout', {'index': '3'})
-                        comment_at = coment_el.find('android.widget.ImageView', {'index': '0'})
-                        comment_send = coment_el.find('android.widget.Button')
-                        print("comment_at", comment_at['bounds'])
-                        print("comment_send", comment_send['bounds'])
-                        perform_click_by_bounds(comment_at['bounds'], driver)
-                        
-                        textarget = TARGET_LIST[i]
-                        
-                        
-                        
-                        
-                        execute_adb_command(driver, f"am broadcast -a ADB_INPUT_TEXT --es msg '{textarget}'")
-                        time.sleep(2)
-                        
-                        with open('comment_at.xml', 'w') as f:
-                            f.write(driver.page_source)
-                            
-                        soup2 = BeautifulSoup(driver.page_source, 'xml')
-                        target = soup2.find('android.widget.TextView', {'text': textarget})
-                        
-                        if target is not None:
-                            bounds = target['bounds']
-                            perform_click_by_bounds(bounds, driver)
-                        
-                        
-                    # 輸入第二組
-                        time.sleep(2)
-                    
-                    
-                        
-                        
-                    
-                        
-                    
-                    # time.sleep(2)
-                    
-                    # # 使用adb keyboard，输入@camglocks300
-                    # execute_adb_command(driver, "ime enable com.android.adbkeyboard/.AdbIME")
-                    # execute_adb_command(driver, "ime set com.android.adbkeyboard/.AdbIME")
-                    
-                    # for i in TARGET_LIST:
-                    #     # 使用 ADB Keyboard 输入文本
-                    #     text = f"@{i}"
-                    #     execute_adb_command(driver, f"am broadcast -a ADB_INPUT_TEXT --es msg '{text}'")
-                    #     time.sleep(2)
-                        
-                    #     break
-                        
+                video_ele = soup.find('androidx.viewpager.widget.ViewPager')
                 
-            
+                if video_ele is not None:
+                    print("video_ele存在")
+                
+                if video_ele is not None:
+                    # 找到video元素下的android.widget.TextView
+                    video_text = video_ele.find('android.widget.TextView')
+                    if video_text is not None:
+                        print("video_text存在")
+                    if video_text is not None:
+                        bounds = video_text['bounds']
+                        perform_click_by_bounds(bounds, driver)               
+                    time.sleep(10)
+                    
+                    # with open('video.xml', 'w') as f:
+                    #     f.write(driver.page_source)
+                        
+                    # ! 每5个targetlist 发一次评论
+                    for j in range(0, len(TARGET_LIST), 5):
+                        print("========")
+                        xxxx = driver.page_source
+                        time.sleep(2)
+                        soupa = BeautifulSoup(xxxx, 'xml')
+                            #android.widget.EditText
+                        comment_el = soupa.find('android.widget.EditText')
+                        if comment_el is not None:
+                            bounds = comment_el['bounds']
+                            perform_click_by_bounds(bounds, driver)
+                        else:
+                            print("comment_el不存在")
+                        chunk = TARGET_LIST[j:j+5]
+                            
+                        
+                        for i in range(len(chunk)):    
+                                soup1 = BeautifulSoup(driver.page_source, 'xml')
+                                    
+                                # android.widget.LinearLayout
+                                coment_el = soup1.find('android.widget.LinearLayout', {'index': '3'})
+                                comment_at = coment_el.find('android.widget.ImageView', {'index': '0'})
+                                comment_send = coment_el.find('android.widget.Button')
+                                print("comment_at", comment_at['bounds'])
+                                print("comment_send", comment_send['bounds'])
+                                perform_click_by_bounds(comment_at['bounds'], driver)
+                                
+                                textarget = chunk[i]
 
-    # try:
-    #     perform_click(1341, 179, driver)
-    #     # 使用adb keyboard，输入@camglocks300
-    #     execute_adb_command(driver, "ime enable com.android.adbkeyboard/.AdbIME")
-    #     execute_adb_command(driver, "ime set com.android.adbkeyboard/.AdbIME")
-
-    # # 使用 ADB Keyboard 输入文本
-    #     # text = "@camglocks300"
-    #     text = "@7jhrmbufvvuij"
-    #     execute_adb_command(driver, f"am broadcast -a ADB_INPUT_TEXT --es msg '{text}'")
-
-    # # 等待输入完成
-    #     time.sleep(10)
-
-    #     perform_click(1297, 183, driver)
-
-    #     time.sleep(10)
-    #     perform_click(880, 880, driver)
-
-    #     time.sleep(10)
-    #     perform_click(249,1600,driver)
-
-    #     time.sleep(10)
-    #     # actions.w3c_actions.pointer_action.move_to_location(712, 2298)
-    #     perform_click(712, 2298, driver)
-
-    #     text1 = "@twins"
-    #     execute_adb_command(driver, f"am broadcast -a ADB_INPUT_TEXT --es msg '{text1}'")
-    #     execute_adb_command(driver, f"am broadcast -a ADB_INPUT_TEXT --es msg '{text1}'")
-    #     execute_adb_command(driver, f"am broadcast -a ADB_INPUT_TEXT --es msg '{text1}'")
-    #     execute_adb_command(driver, f"am broadcast -a ADB_INPUT_TEXT --es msg '{text1}'")
-    #     execute_adb_command(driver, f"am broadcast -a ADB_INPUT_TEXT --es msg '{text1}'")
-    #     execute_adb_command(driver, f"am broadcast -a ADB_INPUT_TEXT --es msg '{text1}'")
-    #     execute_adb_command(driver, f"am broadcast -a ADB_INPUT_TEXT --es msg '{text1}'")
-    #     execute_adb_command(driver, f"am broadcast -a ADB_INPUT_TEXT --es msg '{text1}'")
-
-    #     print("el1,done")
-
-    #     ebutton = driver.find_element(by=AppiumBy.ID, value="com.zhiliaoapp.musically:id/b0x")
-    #     ebutton.click()
-    #     print("el2,done")
-    # except Exception as e:
-    #     print("e",e)
-
-    time.sleep(20)
-
-    driver.quit()
+                                execute_adb_command(driver, f"am broadcast -a ADB_INPUT_TEXT --es msg '{textarget}'")
+                                time.sleep(2)
+                                
+                                # with open('comment_at.xml', 'w') as f:
+                                #     f.write(driver.page_source)
+                                    
+                                soup2 = BeautifulSoup(driver.page_source, 'xml')
+                                target = soup2.find('android.widget.TextView', {'text': textarget})
+                                
+                                
+                                
+                                if target is not None:
+                                    bounds = target['bounds']
+                                    perform_click_by_bounds(bounds, driver)
+                                if i == 4:
+                                    try:
+                                        perform_click_by_bounds(comment_send['bounds'], driver)                            
+                                        print("success comment")
+                                    except:
+                                        print("success error")
+                                time.sleep(2)
+                            
+        except Exception as e:
+                print("e", e)      
+                driver.quit()
+                
+        finally:
+            driver.quit()
 
 
 def perform_click(x, y, driver):

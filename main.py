@@ -97,8 +97,11 @@ def switchperson():
     return bounds_list
 def main():
     list1 = switchperson()
+    # list1 =  ['[231,1772][496,1827]']
     for i in list1:
         doit(i)
+        
+    
 
 def mainscreen(bounds):
     options = AppiumOptions()
@@ -191,7 +194,7 @@ def doit(bound1):
     
     text = "@7jhrmbufvvuij"
 
-    time.sleep(2)
+    time.sleep(30)
     print("start")
 
     perform_click(1020, 183, driver)
@@ -340,16 +343,22 @@ def doit(bound1):
                         
                         for i in range(len(chunk)):    
                                 soup1 = BeautifulSoup(driver.page_source, 'xml')
-                                    
+                                # =====
+                                with open('comment.xml', 'w') as f:
+                                    f.write(driver.page_source)
+                                
+                                time.sleep(20)
+                                # =====
                                 # android.widget.LinearLayout
-                                coment_el = soup1.find('android.widget.LinearLayout', {'index': '3'})
-                                comment_at = coment_el.find('android.widget.ImageView', {'index': '0'})
-                                comment_send = coment_el.find('android.widget.Button')
+                                # coment_el = soup1.find('android.widget.LinearLayout', {'index': '0'})
+                                comment_at = soup1.find_all('android.widget.ImageView', {'index': '0'})[-1]
+                                comment_send = soup1.find('android.widget.Button',{'content-desc': '發佈評論'})
                                 print("comment_at", comment_at['bounds'])
                                 print("comment_send", comment_send['bounds'])
                                 perform_click_by_bounds(comment_at['bounds'], driver)
                                 
-                                textarget = chunk[i]
+                                # textarget =  '@' + chunk[i]
+                                textarget =  chunk[i]
 
                                 execute_adb_command(driver, f"am broadcast -a ADB_INPUT_TEXT --es msg '{textarget}'")
                                 time.sleep(2)
